@@ -5,12 +5,16 @@ import Navbar from './components/Navbar'
 import Loginpage from'./pages/Loginpage'
 import Register from './pages/Register'
 import Messaging from './pages/Messaging'
+import Sidebar from './components/Sidebar'
+
 function App() {
  
 
   return (
     <>
-    <Navbar/>
+
+    <Navbar title = "CAmpAPP"/>
+    <Sidebar/>
       <Routes>
         <Route path = '/' element = {<Homepage/>}></Route>
         <Route path = '/login/' element = {<Loginpage/>}></Route>
