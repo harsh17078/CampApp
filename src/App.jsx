@@ -13,10 +13,9 @@ function App() {
   return (
     <>
 
-    <Navbar title = "CAmpAPP"/>
-    <Sidebar/>
+   
       <Routes>
-        <Route path = '/' element = {<Homepage/>}></Route>
+        <Route path = '/home/' element = {<Homepage/>}></Route>
         <Route path = '/login/' element = {<Loginpage/>}></Route>
         <Route path = '/register/' element = {<Register/>}></Route>
         <Route path = '/massaging/' element = {<Messaging/>}></Route>

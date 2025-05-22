@@ -12,7 +12,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <ChakraProvider value = {defaultSystem}>
+      <ChakraProvider value={defaultSystem} >
           <App/>
       </ChakraProvider>
     </BrowserRouter>
