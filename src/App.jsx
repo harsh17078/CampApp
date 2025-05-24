@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import {Routes , Route} from 'react-router';
 import Homepage from './pages/Homepage'
-import Navbar from './components/Navbar'
+import Navbar2 from './components/Navbar2'
 import Loginpage from'./pages/Loginpage'
 import Register from './pages/Register'
 import Messaging from './pages/Messaging'
 import Sidebar from './components/Sidebar'
+
 
 function App() {
  
@@ -15,7 +16,7 @@ function App() {
 
    
       <Routes>
-        <Route path = '/home/' element = {<Homepage/>}></Route>
+        <Route path = '/' element = {<Homepage/>}></Route>
         <Route path = '/login/' element = {<Loginpage/>}></Route>
         <Route path = '/register/' element = {<Register/>}></Route>
         <Route path = '/massaging/' element = {<Messaging/>}></Route>

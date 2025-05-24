@@ -12,6 +12,7 @@ export default function Sidebar(){
                color="white"
                h="100vh"
                p={1}
+			   top = "60px"
                position="fixed"
 			shadow = "md"
 			borderRadius={"md"}
