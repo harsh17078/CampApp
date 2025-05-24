@@ -1,2 +1,47 @@
+.carousel .carousel-item {
+    height: 500px;
+
+}
 
 
+.carousel-item img {
+    height: 500px;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    top: 55%;
+    transform: translateY(-50%);
+}
+
+.carousel-caption h4 {
+    font-weight: 900;
+    font-size: xx-large;
+    margin-bottom: 5%;
+}
+
+.carousel-caption p {
+    font-weight: 600;
+    font-size: large;
+}
+
+@media (max-width: 800px) {
+
+    /* CSS that should be displayed if width is equal to or less than 800px goes here */
+    .carousel .carousel-item {
+        height: 650px;
+
+    }
+
+    .carousel-item img {
+        height: 650px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .carousel-caption {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+}

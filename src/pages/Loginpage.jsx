@@ -2,7 +2,9 @@ import { Button, Tabs, Card, Container, Text, Stack, Input, Separator, Box, Link
 import { PasswordInput } from "../components/ui/password-input"
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
-import { Grid, GridItem } from "@chakra-ui/react"
+import NavFirst from "../components/NavFirst";
+import Footer from "../components/Footer";
+
 
 
 
@@ -12,15 +14,12 @@ function Loginpage() {
         <>
           
 
-            
-            <Container mt='8'  >
-                <Text textAlign="center">
-                    Let's Camp Together
-                </Text>
-                <Card.Root variant={"elevated"} flexDirection="row" overflow="hidden" gap="4" size={"lg"}  >
+            <NavFirst/>
+
+                <Card.Root variant={"elevated"} flexDirection="row" overflow="hidden" gap="4" size={"lg"}  m="2"  >
                     <Image
                         objectFit="cover"
-                        src="../src/assets/pexels-josh-hild-1270765-2422265.jpg"
+                        src="../src/assets/portrait/pexels-josh-hild-1270765-2422265.jpg"
                         alt="Caffe Latte"
                         w={[100,200,500]}
                         height={["auto","auto",550]}
@@ -45,15 +44,15 @@ function Loginpage() {
                                 <Box boxAlign="center" textAlign={"center"} overflow="hidden">
                                     <Input type='email' placeholder='Username/Email' mb="5"/>
                                     <PasswordInput placeholder='Password'  />
-                                    <Button mt="5" colorPalette="gray" variant="outline">Login</Button>
+                                    <Button mt="5" colorPalette="gray" rounded={"md"} variant="outline" onClick={()=>{console.log("Login")}}>Login</Button>
                                 </Box>
+                                <Separator mt='5'/>
                                 <Text textAlign="center" mt="4">or <br/>
                                     Continue with
                                 </Text>
-                                <Separator mt='5'/>
                                 <Group grow mt='3'>
-                                <Button variant='outline'><FcGoogle /></Button>
-                                <Button variant="outline"><FaApple /></Button>
+                                <Button variant='outline' onClick={()=>{console.log("Google")}}><FcGoogle /></Button>
+                                <Button variant="outline" onClick={()=>{console.log("Apple")}}><FaApple /></Button>
                                 </Group>
                             </Tabs.Content>
                             <Tabs.Content value='Tab2'>
@@ -73,7 +72,7 @@ function Loginpage() {
                     </Card.Footer>
                     </Box>
                 </Card.Root>
-            </Container>
+            <Footer/>        
 
         </>
     )
