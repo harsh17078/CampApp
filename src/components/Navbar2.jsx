@@ -16,7 +16,7 @@ export default function Navbar2(props) {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary px-2">
+      <nav className="navbar navbar-expand-lg bg-body-tertiary d-flex fixed-top px-2">
         <div className="container-fluid w-100 px-2">
 
           {/* Brand Section */}

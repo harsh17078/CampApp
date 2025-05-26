@@ -1,10 +1,10 @@
 import { Container, Text, Box, HStack, Image, Center, Blockquote, Editable, IconButton } from "@chakra-ui/react";
-import Navbar from "../components/Navbar";
+import Navbar2 from "../components/Navbar2";
 import { LuCheck, LuPencilLine, LuX } from "react-icons/lu"
 const Profile = () => {
     return (
         <>
-            <Navbar />
+            <Navbar2 />
             <Container>
                 <Text>
                     <h5>
