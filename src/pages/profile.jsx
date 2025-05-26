@@ -1,4 +1,4 @@
-import { Container, Text, Box, HStack, Image, Center, Blockquote, Editable, IconButton } from "@chakra-ui/react";
+import { Container, Text, Box, HStack, Image, Center, Blockquote, Editable, IconButton, Group, Button, Separator, Grid, For, Card } from "@chakra-ui/react";
 import Navbar2 from "../components/Navbar2";
 import { LuCheck, LuPencilLine, LuX } from "react-icons/lu"
 import { useState } from "react"
@@ -103,27 +103,26 @@ const Profile = () => {
 
             <Container textAlign="center">
                 ALL Posts
-                <Separator  marginBottom={"5"}/>
+                <Separator marginBottom={"5"} />
 
                 <Grid templateColumns="repeat(3, 1fr)" gap="6">
 
-           
-                <For each={["One", "Two", "Three","4","5","6","7"]}>
-                    {(item, index) =>
 
-                        <Card.Root width={"sm"} key={index}>
-                            <Card.Body>
-                                <Card.Header>
-                                    12/12/2024
-                                </Card.Header>
-                                <Card.Description>
-                                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur veniam ullam, harum reiciendis, consequatur adipisci quaerat sequi explicabo amet, assumenda magnam facere est inventore excepturi cumque suscipit veritatis beatae corrupti.
-                                </Card.Description>
-                            </Card.Body>
-                        </Card.Root>
-                    }
-                </For >
-                     </Grid>
+                    <For each={["1", "2", "3", "4", "5", "6", "7"]}>
+                        {(item, index) =>
+                            <Card.Root width={"sm"} key={index}>
+                                <Card.Body>
+                                    <Card.Header>
+                                        {item}/12/2024 
+                                    </Card.Header>
+                                    <Card.Description>
+                                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur veniam ullam, harum reiciendis, consequatur adipisci quaerat sequi explicabo amet, assumenda magnam facere est inventore excepturi cumque suscipit veritatis beatae corrupti.
+                                    </Card.Description>
+                                </Card.Body>
+                            </Card.Root>
+                        }
+                    </For >
+                </Grid>
             </Container>
 
         </>
