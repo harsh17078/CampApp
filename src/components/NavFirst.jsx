@@ -5,7 +5,7 @@ const NavFirst = () => {
     return (
         <>
             <nav className="navbar bg-body-tertiary ">
-                <div className="container-fluid d-flex justify-content-center mt-3">
+                <div className="container-fluid d-flex justify-content-center ">
                     <a className="navbar-brand d-flex gap-2" href="#">
                         <Scope height="30" width="30" />
                         <Text >Camp</Text>
