@@ -1,48 +1,56 @@
 import react from 'react';
-import {Box , Drawer , VStack , Button , IconButton} from "@chakra-ui/react";
-import { Separator, Stack } from "@chakra-ui/react"
+import { Box, Drawer, VStack, Button, IconButton, Text } from "@chakra-ui/react";
+import { GoHome } from "react-icons/go";
+import { MdDynamicFeed } from "react-icons/md";
+import { MdEmojiPeople } from "react-icons/md";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { IoMdSettings } from "react-icons/io";
 
-export default function Sidebar(){
-	return(
-         <>
-	      <Box 
-		     as="section" 
-		     w="72"
-               bg="#cddbe6"
-               color="white"
-               h="100vh"
-               p={1}
-			   top = "60px"
-               position="fixed"
-			shadow = "md"
-			borderRadius={"md"}
-               display={{ base: 'none', md: 'block' }}
-		    >
-		    
-		   <VStack>
-			<Button w= "100%"  variant={'ghost'} borderRadius={"md"}> Home</Button>
-			<Button w= "100%"  variant={'ghost'} borderRadius={"md"}> Feed</Button>
-			<Button w= "100%" variant={'ghost'} borderRadius={"md"}>Chats</Button>
-			<Button w= "100%"  variant={'ghost'} borderRadius={"md"}>Videos</Button>
-			<Button w= "100%"  variant={'ghost'} borderRadius={"md"}>group</Button>
-			<Button w= "100%"  variant={'ghost'} borderRadius={"md"}>Bookmarks</Button>
-			<Button w= "100%"  variant={'ghost'} borderRadius={"md"}>Questions?</Button>
-			<Button w= "50%"  h= "35px" margin={3} borderRadius={"md"} variant={'outline'}>Show More</Button>
-		
-			</VStack> 
-			<Stack >			
-				<Separator variant = {"solid"} size = "lg" colorPalette = {"teal"}/>
+import color from "../assets/color.json";
+import Lottie from "lottie-react"
 
-			</Stack>
-		    
 
-		 </Box>
-	    
-	    
-	    </>
+export default function Sidebar() {
 
 
 
-	)          
+	return (
+		<>
+
+			<Box display={{ base: "none", md: "block", lg: "block" }}
+				position="fixed"
+				left="0"
+				top="10"
+				height="100vh"
+				p={4}
+				zIndex="1000"
+				w={{ md: "20%", lg: "25%" }}
+
+			>
+
+
+				<VStack spacing={4} p={4} bg="gray.100" height="100vh" >
+					<Button variant={"surface"} rounded={"2xl"} width={"100%"}><GoHome />Home</Button>
+					<Button variant={"surface"} rounded={"2xl"} width={"100%"}><MdDynamicFeed />Feed</Button>
+					<Button variant={"surface"} rounded={"2xl"} width={"100%"}><MdEmojiPeople />People</Button>
+					<Button variant={"surface"} rounded={"2xl"} width={"100%"}><FaPeopleGroup />Group</Button>
+					<Button variant={"surface"} rounded={"2xl"} width={"100%"}><IoMdSettings />Settings</Button>
+					<Box position={"fixed"} bottom={"0"} maxWidth={"70%"} overflow={"hidden"} p="5" pb="0">
+						<Lottie animationData={color} loop={true}
+							style={{
+								width: "100%", height: "auto", transform: "rotate(180deg)"
+							}}
+						/>
+					</Box>
+				</VStack>
+
+			</Box>
+
+
+		</>
+
+
+
+	)
 
 }

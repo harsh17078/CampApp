@@ -4,6 +4,7 @@ import CardBody2 from "../components/Card2"
 import axios from 'axios';
 import {useState , useEffect} from 'react'
 import HeaderCard from '../components/HeaderCard';
+import {Box} from "@chakra-ui/react";
 
 
 function Homepage() {
@@ -28,14 +29,17 @@ useEffect(()=>{
 
     return (
         <>
-            <Navbar2 title="CAmpAPP" />
-                <Sidebar /> 
+            <Navbar2 title="CAmpAPP" />            
+                <Sidebar />
                 < HeaderCard/>
+                <Box ml={{md:"20"}}>
+
                 {
-            posts?.map((post , key) => (
-                <CardBody2 post = {post} key = {key}/>
-            ))
-           }
+                    posts?.map((post , key) => (
+                        <CardBody2 post = {post} key = {key}/>
+                    ))
+                }
+                </Box>
            
         </>
     );
