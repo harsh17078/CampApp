@@ -3,8 +3,10 @@ import { IoIosSearch } from "react-icons/io";
 import { AiFillInstagram } from "react-icons/ai";
 import { FaBell, FaUserFriends } from "react-icons/fa";
 import { RiMessage2Fill } from "react-icons/ri";
-import { Link } from "@chakra-ui/react";
-import { Avatar, AvatarGroup, HStack, defineStyle } from "@chakra-ui/react";
+
+import { Avatar, AvatarGroup, HStack, defineStyle,Button } from "@chakra-ui/react";
+import Profile from '../pages/profile';
+import { useNavigate,Link } from 'react-router';
 
 export default function Navbar2(props) {
   const ringCss = defineStyle({
@@ -13,6 +15,13 @@ export default function Navbar2(props) {
     outlineOffset: "2px",
     outlineStyle: "solid",
   });
+
+
+const navigate = useNavigate();
+const  handleProfile = ()=> {
+         navigate('/profile');
+    }
+
 
   return (
     <>
@@ -134,7 +143,7 @@ export default function Navbar2(props) {
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="#">Home</Link>
+                <Link className="nav-link" to="/home/">Home</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/">Timeline</Link>
@@ -145,11 +154,13 @@ export default function Navbar2(props) {
               <li className="nav-item fs-5"><FaBell /></li>
               <li className="nav-item">
                 <HStack>
+                  <Button variant = 'ghost' onClick = {handleProfile}>
                   <AvatarGroup>
                     <Avatar.Root css={ringCss} size="lg" colorPalette="pink">
                       <Avatar.Fallback name="Harsh" />
                     </Avatar.Root>
                   </AvatarGroup>
+                  </Button>
                 </HStack>
               </li>
             </ul>

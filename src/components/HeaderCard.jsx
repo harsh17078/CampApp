@@ -15,9 +15,22 @@ import {
 import { LuCircleUser,LuFileBadge } from 'react-icons/lu';
 import { IoLocation } from 'react-icons/io5';
 import ExportImage from '../components/Image';
+import { BsEmojiSunglasses } from "react-icons/bs";
+import EmojiPicker from 'emoji-picker-react';
+import { useState } from 'react';
+import {  Popover, Portal } from "@chakra-ui/react";
 
-export default function HeaderCard(){
-    return(
+export default function HeaderCard(props){
+
+      const [emoji , setEmoji] = useState(null);
+      const onEmojiClick = (emojiData)=>{
+      
+        setEmoji(emojiData.emoji)
+         
+      };
+   
+      return(
+
         <>
        <Box  position="fixed"
         top="60px"
@@ -60,14 +73,32 @@ export default function HeaderCard(){
        
                    <WrapItem >
                      <HStack gapX= {0}>
-                              <IoLocation />
-                       <Text  pt = '4'  fontWeight="medium">Location</Text>
+                              <IoLocation/>
+                          <Text  pt = '4'  fontWeight="medium">Location</Text> 
                       </HStack>
                   
                    </WrapItem>
        
                    <WrapItem spacing = {8}>
-                     <Text pt = '4' px = {'4'} fontWeight="medium">Feeling</Text>
+                    <Popover.Root positioning={{ placement: "bottom-end" }}>
+                                <Popover.Trigger asChild>
+                                  <HStack gapX= {0}>
+                              
+                                      {!emoji && <BsEmojiSunglasses />}
+                                      {emoji && <Box as="span">{emoji}</Box>}
+                                      <Text pt = '4' px = {'1'} fontWeight="medium">Feeling</Text>     
+                                    </HStack>
+                                </Popover.Trigger>
+                                <Portal>
+                                  <Popover.Positioner>
+                                    <Popover.Content w='auto'>
+                                      <Popover.Arrow />
+                                      <Popover.Body> <EmojiPicker onEmojiClick={onEmojiClick} height={300} /></Popover.Body>
+                                    </Popover.Content>
+                                  </Popover.Positioner>
+                                </Portal>
+                              </Popover.Root>
+                   
                    </WrapItem>
        
                    <WrapItem ml={{sm : "1"}}>
@@ -96,4 +127,4 @@ export default function HeaderCard(){
 
 
 
-}
+}                       

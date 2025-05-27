@@ -29,7 +29,7 @@ useEffect(()=>{
     return (
         <>
             <Navbar2 title="CAmpAPP" />
-                <Sidebar />
+                <Sidebar /> 
                 < HeaderCard/>
                 {
             posts?.map((post , key) => (

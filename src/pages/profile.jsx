@@ -17,7 +17,7 @@ const Profile = () => {
     return (
         <>
             <Navbar2 />
-            <Container>
+            <Container marginY='3' w = {{ base :'76rem' ,sm:'77rem' , md : '100rem' , lg:'auto'}}>
                 <Text>
                     Profile details has been shown here.
                 </Text>
