@@ -70,6 +70,7 @@ export default function HeaderCard(props) {
         left="16%"
         zIndex="500"
         my={'3rem'}
+        mx={'5rem'}
         display="flex"
        
       >
@@ -85,6 +86,7 @@ export default function HeaderCard(props) {
           p={4}
           // bg="white"
           mx="auto"
+          ml='26%'
           zIndex={10}
         >
 
