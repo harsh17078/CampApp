@@ -8,7 +8,7 @@ import { RiStickyNoteAddLine } from "react-icons/ri";
 
 
 
-const Profile = () => {
+const Profile = (props) => {
 
     const [bio, setbio] = useState("");
 

@@ -39,8 +39,8 @@ export default function CardBody2(props) {
           borderRadius="xl"
           boxShadow="xl"
           p={4}
-          
-          bg="white"
+         style = {props.myStyle}
+          // bg="white"
         >
           {/* Header */}
           <HStack spacing={4}>
@@ -53,7 +53,7 @@ export default function CardBody2(props) {
               <Text marginTop={0} marginBottom={0} paddingY={0} fontWeight="bold" fontSize="sm">
                 Harsh Maurya
               </Text>
-              <Text marginTop={0} marginBottom={0} paddingY={0} fontSize="sm" color="gray.500">
+              <Text marginTop={0} marginBottom={0} paddingY={0} fontSize="sm"  color="gray.500" style = {props.myStyle}>
                 @harsh{props.post.userId}
               </Text>
             </Box>

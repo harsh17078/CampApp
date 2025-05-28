@@ -43,13 +43,13 @@ const  handleProfile = ()=> {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary d-flex fixed-top px-2">
+      <nav className="navbar navbar-expand-lg  d-flex fixed-top px-2"  style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>
         <div className="container-fluid w-100 px-2">
 
           {/* Brand Section */}
           <div className="d-flex align-items-center">
             <AiFillInstagram size={30} className="me-2" />
-            <h3 className="navbar-brand mb-0">{props.title}</h3>
+            <h3 className="navbar-brand mb-0" style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>{props.title}</h3>
           </div>
 
           {/* Toggler for small screens */}
@@ -66,12 +66,13 @@ const  handleProfile = ()=> {
           </button>
 
           {/* Search bar for md and up */}
-          <div className="d-none mx-auto d-md-block " style={{  width : "500px" }}>
-            <form
+          <div className="d-none mx-auto d-md-block " style={{  width : "500px"}} >
+            <form 
               className="position-relative w-100"
               role="search"
+              
             >
-              <span
+              <span 
                 className="position-absolute"
                 style={{
                   top: "50%",
@@ -80,12 +81,13 @@ const  handleProfile = ()=> {
                   color: "#6c757d",
                   fontSize: "1.3rem",
                   zIndex: "2"
+                  
                 }}
               >
                 <IoIosSearch />
               </span>
 
-              <input
+              <input  style = {{backgroundColor : props.btntext === 'Light' ? 'grey': 'white' }}
                 className="form-control rounded-pill ps-5 shadow-sm border-0"
                 type="search"
                 placeholder="Search for friend, post or video"
@@ -113,7 +115,7 @@ const  handleProfile = ()=> {
           </div>
 
           {/* Navbar Right Items */}
-          <div className="collapse navbar-collapse mt-2 mt-lg-0" id="navbarTogglerDemo03">
+          <div className="collapse navbar-collapse mt-2 mt-lg-0" id="navbarTogglerDemo03" >
             <ul className="navbar-nav ms-auto align-items-center gap-3">
 
               {/* Small screen: show search icon in toggler */}
@@ -160,11 +162,11 @@ const  handleProfile = ()=> {
                </form>
               </li>
 
-              <li className="nav-item">
-                <Link className="nav-link" to="/home/">Home</Link>
+              <li className="nav-item" >
+                <Link className="nav-link" to="/home/" style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/">Timeline</Link>
+                <Link className="nav-link" to="/" style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>Timeline</Link>
               </li>
 
               <li className="nav-item fs-5"><FaUserFriends /></li>

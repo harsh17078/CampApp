@@ -71,31 +71,30 @@ export default function HeaderCard(props) {
         zIndex="500"
         my={'3rem'}
         display="flex"
-        w={{ base: "100%", md: "75%" }}
+       
       >
         {/* Sticky Card */}
         <Box
           w={{ base: '100%', sm: '24rem', md: '38rem' }}
           maxW="100%"
-
           borderWidth="1px"
           borderRadius="xl"
-
+          style = {props.myStyle}
           boxShadow="xl"
           top="60px"
           p={4}
-          bg="white"
+          // bg="white"
           mx="auto"
           zIndex={10}
         >
 
-          <HStack spacing={4}>
+          <HStack spacing={4} style = {props.myStyle}>
              <AvatarGroup>
                                 <Avatar.Root css={ringCss} size="lg" colorPalette="pink">
                                   <Avatar.Fallback name={user.name} />
                                 </Avatar.Root>
                               </AvatarGroup>
-            <Input placeholder="what's in your mind !" variant="Flushed"
+            <Input style = {props.myStyle} placeholder="what's in your mind !" variant="Flushed"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)} />
           </HStack>
@@ -104,7 +103,7 @@ export default function HeaderCard(props) {
             {/* Footer  */}
             <Wrap spacing={4} mt={4} align="center" justify="space-between">
               <WrapItem paddingX={0} marginTop={0}>
-                <ExportImage />
+                <ExportImage/>
               </WrapItem>
 
               <WrapItem >
@@ -139,6 +138,7 @@ export default function HeaderCard(props) {
 
               <WrapItem ml={{ sm: "1" }}>
                 <Button
+                style = {props.myStyle}
                   variant="outline"
                   colorPalette={'green'}
                   // bg="#2d724d9c"
