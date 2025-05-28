@@ -8,6 +8,11 @@ import {Box} from "@chakra-ui/react";
 
 
 function Homepage() {
+
+  
+
+
+
     const [posts, setPosts]   = useState(null);
         async function getPosts(){
                 axios.get('https://dummyjson.com/posts')
@@ -28,7 +33,9 @@ useEffect(()=>{
 },[posts]);
 
     return (
+
         <>
+       
             <Navbar2 title="CAmpAPP" />            
                 <Sidebar />
                 < HeaderCard/>

@@ -13,7 +13,7 @@ import Footer from "../components/Footer";
 import login from "../assets/login.json";
 import Lottie from "lottie-react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 const country_list = [
@@ -273,9 +273,17 @@ const country_list = [
 function Loginpage() {
 
     const [logindata, setLoginData] = useState({
-        email: "",
-        password: ""
+        email:"",
+        password:""
     })
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("userdata");
+        if (storedUser) {
+            setLoginData(JSON.parse(storedUser));
+        }
+    }, []);
+
 
     const [data, setData] = useState({
         email: "",
@@ -286,6 +294,10 @@ function Loginpage() {
         dob: "",
         country: ""
     });
+
+    function savetolocal(data) {
+        localStorage.setItem("userdata", JSON.stringify(data));
+    }
 
 
     const { contains } = useFilter({ sensitivity: "base" })
@@ -306,17 +318,15 @@ function Loginpage() {
     const navigate = useNavigate();
 
     function checkDeatils(logindata) {
-        {
-            if (logindata.email.trim() && logindata.password.trim() && logindata.email === data.email && logindata.email === data.password) {
-                navigate("/home/");
-            }
-            else if (!logindata.email.trim() && !logindata.password.trim()) {
-                alert("UserName or Password cannot be blank!");
-            }
-            else {
-                alert("Login credential not matched, Try again!")
-            }
+        const storedUser = JSON.parse(localStorage.getItem("userdata"));
+        if (storedUser && storedUser.email===logindata.email && storedUser.password===logindata.password ){
+            alert("login succesfull");
+            navigate("/home/")
         }
+        else{
+            alert("Invalid credential");
+        }
+       
     }
     const [open, setOpen] = useState(false)
 
@@ -383,7 +393,7 @@ function Loginpage() {
                             <Tabs.Content value='Tab2'>
                                 <Box boxAlign="center" textAlign={"center"} overflow="hidden"  >
                                     <Input type='email' placeholder='Email address' mb="5" id="email" value={data.email} onChange={(e) => { setData({ ...data, email: e.target.value }) }} />
-                                    <Input type='tel' placeholder='Phone no.' mb="5" id="phone" value={data.phone} onChange={(e) => { setData({ ...data, phone: e.target.value }) }} />
+                                    <Input type='tel' placeholder='Phone no.' maxLength={10} mb="5" id="phone" value={data.phone} onChange={(e) => { setData({ ...data, phone: e.target.value }) }} />
                                     <PasswordInput placeholder='Set Password' id="password" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} />
                                     <Dialog.Root size="cover" placement="center" motionPreset="slide-in-bottom" open={open} onOpenChange={(e) => {
                                         {
@@ -480,6 +490,7 @@ function Loginpage() {
                                                         <Dialog.Footer>
                                                             <Button rounded={"full"} onClick={() => {
                                                                 { alert("Account created, Login to continue!") }
+                                                                savetolocal(data)
                                                                 navigate(0)
                                                             }}>Save</Button>
                                                         </Dialog.Footer>

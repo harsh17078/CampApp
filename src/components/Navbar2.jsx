@@ -7,6 +7,7 @@ import { RiMessage2Fill } from "react-icons/ri";
 import { Avatar, AvatarGroup, HStack, defineStyle,Button } from "@chakra-ui/react";
 import Profile from '../pages/profile';
 import { useNavigate,Link } from 'react-router';
+import { useEffect,useState } from 'react';
 
 export default function Navbar2(props) {
   const ringCss = defineStyle({
@@ -22,6 +23,23 @@ const  handleProfile = ()=> {
          navigate('/profile');
     }
 
+    const [user, setUser] = useState({
+        email: "",
+        phone: "",
+        password: "",
+        name: "",
+        gender: "",
+        dob: "",
+        country: ""
+    });
+
+      useEffect(() => {
+          const storedUser = localStorage.getItem("userdata");
+          if (storedUser) {
+              setUser(JSON.parse(storedUser));
+          }
+          
+      }, []);
 
   return (
     <>
@@ -157,7 +175,7 @@ const  handleProfile = ()=> {
                   <Button variant = 'ghost' onClick = {handleProfile}>
                   <AvatarGroup>
                     <Avatar.Root css={ringCss} size="lg" colorPalette="pink">
-                      <Avatar.Fallback name="Harsh" />
+                      <Avatar.Fallback name={user.name} />
                     </Avatar.Root>
                   </AvatarGroup>
                   </Button>

@@ -10,20 +10,29 @@ import {
   AvatarImage, AvatarFallback,
   Wrap,
   WrapItem,
-  Collapsible
+  Collapsible,
+  AvatarGroup,
+  defineStyle
 
 } from '@chakra-ui/react';
 import { IoLocation } from 'react-icons/io5';
 import ExportImage from '../components/Image';
 import { BsEmojiSunglasses } from "react-icons/bs";
 import EmojiPicker from 'emoji-picker-react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Popover, Portal } from "@chakra-ui/react";
 
 
 
 
 export default function HeaderCard(props) {
+
+   const ringCss = defineStyle({
+      outlineWidth: "2px",
+      outlineColor: "colorPalette.500",
+      outlineOffset: "2px",
+      outlineStyle: "solid",
+    });
 
   const [emoji, setEmoji] = useState(null);
   const onEmojiClick = (emojiData) => {
@@ -35,11 +44,29 @@ export default function HeaderCard(props) {
   const [inputValue, setInputValue] = useState("");
   const isOpen = inputValue.trim() !== "";
 
+  const [user, setUser] = useState({
+          email: "",
+          phone: "",
+          password: "",
+          name: "",
+          gender: "",
+          dob: "",
+          country: ""
+      });
+  
+        useEffect(() => {
+            const storedUser = localStorage.getItem("userdata");
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            }
+            
+        }, []);
+
   return (
 
     <>
       <Box position="sticky"
-        top="60px"
+        top="-5px"
         left="16%"
         zIndex="500"
         my={'3rem'}
@@ -63,10 +90,11 @@ export default function HeaderCard(props) {
         >
 
           <HStack spacing={4}>
-            <Avatar.Root css={{ outlineWidth: "2px", outlineColor: "colorPalette.500", outlineOffset: "2px", outlineStyle: "solid" }} colorPalette={'pink'} size="lg" shape="full">
-              <AvatarImage src="https://images.unsplash.com/photo-1592046285097-6cdf4daf0d69?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Ym95c3xlbnwwfHwwfHx8MA%3D%3D"></AvatarImage>
-              <AvatarFallback name="Harsh" > </AvatarFallback>
-            </Avatar.Root>
+             <AvatarGroup>
+                                <Avatar.Root css={ringCss} size="lg" colorPalette="pink">
+                                  <Avatar.Fallback name={user.name} />
+                                </Avatar.Root>
+                              </AvatarGroup>
             <Input placeholder="what's in your mind !" variant="Flushed"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)} />
