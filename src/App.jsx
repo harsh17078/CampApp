@@ -14,8 +14,7 @@ import { lazy } from 'react';
 const Homepage = lazy(() => import('./pages/Homepage.jsx'));
 
 function App() {
-
-
+        
 
 
   return (
@@ -28,7 +27,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path='/home/' element={<Homepage />}></Route>
-          <Route path='/profile' element={<Profile />} ></Route>
+          <Route path='/profile' element={<Profile  />} ></Route>
           <Route path='/messaging/' element={<Messaging />}></Route>
         </Route>
 

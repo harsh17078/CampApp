@@ -87,12 +87,12 @@ const  handleProfile = ()=> {
                 <IoIosSearch />
               </span>
 
-              <input  style = {{backgroundColor : props.btntext === 'Light' ? 'grey': 'white' }}
+              <input  style = {{backgroundColor : props.btntext === 'Light' ? '#a2a2b0': 'white' ,color : props.btntext === 'Light' ? 'white': 'black' , height: "45px" }}
                 className="form-control rounded-pill ps-5 shadow-sm border-0"
                 type="search"
                 placeholder="Search for friend, post or video"
                 aria-label="Search"
-                style={{ height: "45px" }}
+              
               />
 
               <button
@@ -104,7 +104,7 @@ const  handleProfile = ()=> {
                   transform: "translateY(-50%)",
                   fontSize: "1rem",
                   background: "none",
-                  color: "#0d6efd",
+                  color : props.btntext === 'Light' ? "white" : '#0d6efd',
                   border: "none"
                 }}
                 type="submit"

@@ -6,7 +6,6 @@ import {useState , useEffect} from 'react'
 import HeaderCard from '../components/HeaderCard';
 import {Box} from "@chakra-ui/react";
 
-
 function Homepage() {
     const [myStyle , setMyStyle] = useState(
 		{
@@ -14,6 +13,8 @@ function Homepage() {
 		color: 'black',
 		}
 	) 
+
+    
 	// const [btnStyle , setBtnStyle] = useState(
 	// 	{
 	// 	backgroundColor : 'white' ,
@@ -32,6 +33,7 @@ function Homepage() {
 			)
 		
 			setBtnText("Light");
+           
 		}
 		else{
 			setMyStyle(
@@ -42,6 +44,7 @@ function Homepage() {
 				}
 			)
 			 setBtnText("Dark");
+           
 		}
 		console.log("onlcick is trigeered");
 	}
@@ -61,47 +64,14 @@ useEffect( ()=>{
     getPosts();
  },[]);
 
-
-// useEffect(()=>{
-//     console.log(posts)
-// },[posts]);
-    //  const[mode, setMode] = useState('light');
-    //     const[alert , setAlert] = useState(null);
-    
-    //         const showalert = (message , type)=>{
-    //            setAlert({
-    //                  msg : message ,
-    //                  type : type,
-    //            }
-    //          )
-    //         setTimeout(() => {
-    //           setAlert(null);
-    //         },3000);
-    //   }
-    
-    //     let toggleMode = ()=>{
-    //       if(mode === 'light'){
-    //         setMode('dark');
-    //       console.log("hey i m dark");
-    //       document.body.style.backgroundColor  = '#3d4c5d';
-    //       showalert("dark mode has been enabled" , "success");
-          
-    //       }
-    //       else{
-    //          setMode('light');
-    //         document.body.style.backgroundColor  = 'white';
-    //         console.log("hey i m light");
-    //         showalert("light mode has been enabled" , "success");
-    //       }
-    //     }
-    
           
           
     return (
 
         <>
        
-            <Navbar2 title="CAmpAPP"   myStyle= {myStyle} btntext = {btntext}/>            
+            <Navbar2 title="CAmpAPP"   myStyle= {myStyle} btntext = {btntext}/>  
+              
                 <Sidebar myStyle= {myStyle} toggleStyle= {toggleStyle} btntext = {btntext}/>
                 < HeaderCard  myStyle= {myStyle} btntext = {btntext}/>
                 <Box ml={{md:"20"}} >
