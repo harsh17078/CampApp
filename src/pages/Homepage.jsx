@@ -2,7 +2,7 @@ import Navbar2 from "../components/Navbar2"
 import Sidebar from "../components/Sidebar"
 import CardBody2 from "../components/Card2"
 import axios from 'axios';
-import {useState , useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import HeaderCard from '../components/HeaderCard';
 import {Box} from "@chakra-ui/react";
 
@@ -49,16 +49,18 @@ function Homepage() {
 		console.log("onlcick is trigeered");
 	}
 
+    const [loading , setLoading] = useState(true);
 
-    const [posts, setPosts]   = useState(null);
-        async function getPosts(){
-                axios.get('https://dummyjson.com/posts')
-                .then((res) =>{
-                    setPosts(() => res.data.posts);
-                });
-            // .catch{(er) => console.log(er)};
-        }
-        
+    const [posts, setPosts] = useState(null);
+    async function getPosts() {
+        axios.get('https://dummyjson.com/posts')
+            .then((res) => {
+                setPosts(() => res.data.posts);
+                setLoading(false);
+            });
+        // .catch{(er) => console.log(er)};
+    }
+
 
 useEffect( ()=>{
     getPosts();
@@ -77,13 +79,21 @@ useEffect( ()=>{
                 <Box ml={{md:"20"}} >
 
                 {
-                    posts?.map((post , key) => (
-                        <CardBody2 post = {post} key = {key} myStyle= {myStyle} btntext = {btntext}/>
-                    ))
-                }
-                </Box>
-           
+                    loading ? (
+                        <>
+                            <CardBody2 loading={true} />
+                            <CardBody2 loading={true} />
+                        </>
+                    )
+                        : (
+                            posts?.map((post, key) => (
+                                <CardBody2 post={post} key={key} />
+                            )
+                        ))}
+                
+            </Box>
+
         </>
     );
 }
-export default Homepage
+export default Homepage;
