@@ -11,25 +11,25 @@
   --text-muted: #94a3b8;
   --brand-primary: #4f46e5;
   --brand-gradient: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-  --brand-glow: rgba(99, 102, 241, 0.15);
-  --glass-bg: rgba(255, 255, 255, 0.75);
+  --brand-glow: rgba(99, 102, 241, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.82);
   --glass-border: rgba(255, 255, 255, 0.4);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
 }
 
 [data-theme='dark'],
 .dark-theme {
   --bg-primary: #0b0f19;
   --bg-surface: #111827;
-  --bg-card: rgba(17, 24, 39, 0.85);
-  --border-color: rgba(31, 41, 55, 0.8);
+  --bg-card: rgba(17, 24, 39, 0.88);
+  --border-color: rgba(31, 41, 55, 0.85);
   --text-primary: #f9fafb;
   --text-secondary: #9ca3af;
   --text-muted: #6b7280;
-  --glass-bg: rgba(17, 24, 39, 0.75);
+  --glass-bg: rgba(17, 24, 39, 0.82);
   --glass-border: rgba(255, 255, 255, 0.08);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
@@ -66,17 +66,16 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Gradient Text & Highlights */
+/* Gradient Text & Brand Buttons */
 .gradient-text {
   background: var(--brand-gradient);
   -webkit-background-clip: text;
@@ -87,7 +86,7 @@ body {
 .brand-button {
   background: var(--brand-gradient) !important;
   color: #ffffff !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   border: none !important;
   transition: all 0.2s ease !important;
 }
@@ -95,32 +94,76 @@ body {
 .brand-button:hover {
   opacity: 0.92 !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
 }
 
-/* App Layout & Feed Centering */
-.main-app-container {
+/* 3-Column Microblogging App Layout */
+.microblog-container {
   display: flex;
+  justify-content: center;
+  max-width: 1320px;
+  margin: 0 auto;
   min-height: 100vh;
-  padding-top: 72px; /* For fixed navbar */
+  padding-top: 68px; /* Fixed navbar */
+  padding-left: 0;
+  padding-right: 0;
 }
 
-.feed-content-wrapper {
+.microblog-left-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: none;
+}
+
+.microblog-center-feed {
   flex: 1;
-  margin-left: 0;
-  max-width: 680px;
+  max-width: 640px;
   width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-  padding: 1.5rem 1rem;
+  padding: 1.25rem 1rem;
+  min-height: calc(100vh - 68px);
+}
+
+.microblog-right-widgets {
+  width: 340px;
+  flex-shrink: 0;
+  padding: 1.25rem 1rem;
+  display: none;
 }
 
 @media (min-width: 768px) {
-  .feed-content-wrapper {
-    margin-left: 280px; /* Space for sidebar */
-    margin-right: auto;
-    padding: 2rem 1.5rem;
+  .microblog-left-sidebar {
+    display: block;
   }
+  .microblog-center-feed {
+    border-left: 1px solid var(--border-color);
+  }
+}
+
+@media (min-width: 1100px) {
+  .microblog-right-widgets {
+    display: block;
+  }
+  .microblog-center-feed {
+    border-right: 1px solid var(--border-color);
+  }
+}
+
+/* Hashtag & Mention Highlights */
+.hashtag-link {
+  color: var(--brand-primary);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.hashtag-link:hover {
+  text-decoration: underline;
+}
+
+.mention-link {
+  color: #ec4899;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* Custom Scrollbar */

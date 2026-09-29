@@ -26,7 +26,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Clear token if expired or unauthorized
       if (localStorage.getItem('token')) {
         localStorage.removeItem('token');
         localStorage.removeItem('userdata');
@@ -52,7 +51,7 @@ export const authAPI = {
   },
 };
 
-// User & Profile Services
+// User & Social Graph Services
 export const userAPI = {
   getProfile: async (id = 'me') => {
     const res = await api.get(`/users/${id}`);
@@ -66,12 +65,27 @@ export const userAPI = {
     const res = await api.get(`/users?q=${encodeURIComponent(query)}`);
     return res.data;
   },
+  follow: async (userId) => {
+    const res = await api.post(`/users/${userId}/follow`);
+    return res.data;
+  },
+  unfollow: async (userId) => {
+    const res = await api.post(`/users/${userId}/unfollow`);
+    return res.data;
+  },
+  getSuggestions: async () => {
+    const res = await api.get('/users/suggestions');
+    return res.data;
+  },
 };
 
-// Post Services
+// Microblogging Post Services
 export const postAPI = {
-  getAllPosts: async () => {
-    const res = await api.get('/posts');
+  getAllPosts: async (feedType = 'for-you', tag = null, query = null) => {
+    let url = `/posts?feed=${feedType}`;
+    if (tag) url += `&tag=${encodeURIComponent(tag)}`;
+    if (query) url += `&q=${encodeURIComponent(query)}`;
+    const res = await api.get(url);
     return res.data;
   },
   createPost: async (postData) => {
@@ -82,12 +96,32 @@ export const postAPI = {
     const res = await api.post(`/posts/${postId}/react`, { type });
     return res.data;
   },
+  repost: async (postId) => {
+    const res = await api.post(`/posts/${postId}/repost`);
+    return res.data;
+  },
+  bookmark: async (postId) => {
+    const res = await api.post(`/posts/${postId}/bookmark`);
+    return res.data;
+  },
+  pin: async (postId) => {
+    const res = await api.post(`/posts/${postId}/pin`);
+    return res.data;
+  },
+  recordView: async (postId) => {
+    const res = await api.post(`/posts/${postId}/view`);
+    return res.data;
+  },
   addComment: async (postId, content) => {
     const res = await api.post(`/posts/${postId}/comment`, { content });
     return res.data;
   },
   deletePost: async (postId) => {
     const res = await api.delete(`/posts/${postId}`);
+    return res.data;
+  },
+  getTrending: async () => {
+    const res = await api.get('/posts/trending');
     return res.data;
   },
 };
