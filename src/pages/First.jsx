@@ -1,67 +1,190 @@
-import { Button } from "@chakra-ui/react"
-import { useNavigate } from "react-router";
-import NavFirst from "../components/NavFirst";
-import { FaPersonWalkingArrowRight } from "react-icons/fa6";
-import Footer from "../components/Footer";
-
+import React from 'react';
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  VStack,
+  HStack,
+  SimpleGrid,
+  Badge,
+} from '@chakra-ui/react';
+import { useNavigate } from 'react-router';
+import NavFirst from '../components/NavFirst';
+import Footer from '../components/Footer';
+import { FiArrowRight, FiUsers, FiMessageCircle, FiHeart, FiZap, FiCompass } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
 
 export default function First() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
-    const navigate = useNavigate();
+  const features = [
+    {
+      icon: FiZap,
+      title: "Where Connections Spark",
+      desc: "Connect with authentic people, share real-time moments, and build communities around what you love.",
+    },
+    {
+      icon: FiMessageCircle,
+      title: "Digital Campfire Chat",
+      desc: "Hop into vibrant conversations, direct messaging, and exchange ideas under the stars.",
+    },
+    {
+      icon: FiUsers,
+      title: "Find Your Tribe",
+      desc: "Discover like-minded creators, campers, and innovators from across the globe.",
+    },
+    {
+      icon: FiHeart,
+      title: "Express Freely",
+      desc: "Share your mood, photos, ideas, and stories with customizable feelings and reactions.",
+    },
+  ];
 
-    return (
-        <>
+  return (
+    <Box minHeight="100vh" display="flex" flexDirection="column" bg="var(--bg-primary)">
+      <NavFirst />
 
-            <NavFirst/>
-            <div id="carouselExampleCaptions" className="carousel slide carousel-fade custom-carousel rounded" data-bs-ride="carousel" >
-                <div className="carousel-inner">
-                <div className="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      {/* Hero Section */}
+      <Box pt={{ base: 32, md: 40 }} pb={{ base: 16, md: 24 }} position="relative" overflow="hidden">
+        {/* Background glow effects */}
+        <Box
+          position="absolute"
+          top="10%"
+          left="50%"
+          transform="translateX(-50%)"
+          width="600px"
+          height="350px"
+          borderRadius="full"
+          bg="radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(236,72,153,0.1) 50%, transparent 70%)"
+          filter="blur(50px)"
+          pointerEvents="none"
+          zIndex="0"
+        />
 
-                </div>
-                    <div className="carousel-item active">
-                        <img src="../src/assets/landscape/pexels-mhmd-sedky-1725307-3286807.jpg" className="d-block w-100" alt="..." />
-                        <div className="carousel-caption">
+        <Container maxW="900px" textAlign="center" position="relative" zIndex="1">
+          <Badge
+            colorPalette="indigo"
+            variant="subtle"
+            borderRadius="full"
+            px={4}
+            py={1.5}
+            mb={5}
+            fontSize="xs"
+            fontWeight="600"
+          >
+            🏕️ The Social Platform for Real Connections
+          </Badge>
 
-                            <h4>Where Connections Spark and Stories Unfold!</h4>
+          <Heading
+            as="h1"
+            fontSize={{ base: "3xl", sm: "5xl", md: "6xl" }}
+            fontWeight="900"
+            lineHeight="1.1"
+            letterSpacing="-1.5px"
+            mb={6}
+            color="var(--text-primary)"
+          >
+            Where Connections Spark &{' '}
+            <Text as="span" className="gradient-text">
+              Stories Unfold.
+            </Text>
+          </Heading>
 
-                            <p>Camp is a place where people form bonds and share their life experiences. "Spark" suggests excitement and fresh ideas, while "stories unfold" evokes a sense of community and personal expression.</p>
-                        </div>
-                    </div>
-                    <div className="carousel-item">
-                        <img src="../src/assets/landscape/pexels-mattdvphotography-2526025.jpg" className="d-block w-100" alt="..." />
-                        <div className="carousel-caption">
+          <Text
+            fontSize={{ base: "md", md: "xl" }}
+            color="var(--text-secondary)"
+            maxW="700px"
+            mx="auto"
+            mb={8}
+            lineHeight="1.6"
+          >
+            Camp is your digital campfire. Share life updates, exchange genuine thoughts,
+            and build lasting friendships in a community designed for authentic expression.
+          </Text>
 
-                            <h4>Your Digital Campfire for Real Conversations!</h4>
-                            <p>A campfire symbolizes gathering, storytelling, and friendship—just like how your platform fosters meaningful interactions online.</p>
+          <HStack justify="center" gap={4} wrap="wrap">
+            <Button
+              size="lg"
+              className="brand-button"
+              borderRadius="full"
+              px={8}
+              py={6}
+              fontSize="md"
+              onClick={() => navigate(isAuthenticated ? "/home" : "/login?mode=signup")}
+            >
+              {isAuthenticated ? "Enter Camp Feed" : "Get Started — Free"}
+              <FiArrowRight style={{ marginLeft: 8 }} />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              borderRadius="full"
+              px={7}
+              py={6}
+              fontSize="md"
+              borderColor="var(--border-color)"
+              color="var(--text-primary)"
+              _hover={{ bg: "var(--brand-glow)" }}
+              onClick={() => navigate(isAuthenticated ? "/home" : "/login")}
+            >
+              Sign In
+            </Button>
+          </HStack>
+        </Container>
+      </Box>
 
-                        </div>
-                    </div>
-                    <div className="carousel-item">
-                        <img src="../src/assets/landscape/pexels-olly-3776978.jpg" className="d-block w-100" alt="..." />
-                        <div className="carousel-caption ">
-                            <h4>Gather. Share. Grow. Welcome to Camp!</h4>
-                            <p>Users can gather (meet people), share (their thoughts, content, and ideas), and grow (personally and socially). Simple, impactful, and memorable!</p>
-                            <Button variant={"surface"} colorPalette={"white"} rounded={"2xl"} onClick={() => { navigate("/login/") }}>Let's Go<FaPersonWalkingArrowRight /></Button>
-                        </div>
-                    </div>
+      {/* Feature Highlights Grid */}
+      <Box py={{ base: 12, md: 20 }} bg="var(--bg-surface)" borderTop="1px solid var(--border-color)">
+        <Container maxW="1100px">
+          <VStack textAlign="center" mb={12}>
+            <Heading as="h2" fontSize={{ base: "2xl", md: "3xl" }} fontWeight="800" color="var(--text-primary)">
+              Why You'll Love CampApp
+            </Heading>
+            <Text fontSize="sm" color="var(--text-muted)" maxW="500px">
+              Simple, authentic, and focused on meaningful social moments.
+            </Text>
+          </VStack>
 
-                </div>
-                <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Previous</span>
-                </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Next</span>
-                </button>
-            </div>
-            <Footer/>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={6}>
+            {features.map((item, idx) => {
+              const IconComp = item.icon;
+              return (
+                <Box
+                  key={idx}
+                  className="glass-card"
+                  p={6}
+                  borderRadius="2xl"
+                  bg="var(--bg-primary)"
+                  border="1px solid var(--border-color)"
+                  textAlign="left"
+                >
+                  <Box
+                    p={3}
+                    borderRadius="xl"
+                    bg="var(--brand-glow)"
+                    color="var(--brand-primary)"
+                    display="inline-block"
+                    mb={4}
+                  >
+                    <IconComp size={24} />
+                  </Box>
+                  <Heading as="h3" fontSize="md" fontWeight="700" mb={2} color="var(--text-primary)">
+                    {item.title}
+                  </Heading>
+                  <Text fontSize="xs" color="var(--text-secondary)" lineHeight="1.6">
+                    {item.desc}
+                  </Text>
+                </Box>
+              );
+            })}
+          </SimpleGrid>
+        </Container>
+      </Box>
 
-
-        </>
-    )
+      <Footer />
+    </Box>
+  );
 }
-
