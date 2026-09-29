@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI, userAPI } from '../services/api';
+import { authAPI, userAPI, uploadAPI } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -112,6 +112,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Update avatar handler
+  const updateAvatar = async (file) => {
+    try {
+      const data = await uploadAPI.uploadAvatar(file);
+      if (data.success && data.user) {
+        setUser(data.user);
+        localStorage.setItem('userdata', JSON.stringify(data.user));
+        return { success: true, avatar_url: data.avatar_url, user: data.user };
+      }
+      return { success: false, message: data.message || 'Avatar upload failed' };
+    } catch (err) {
+      const message = err.response?.data?.message || err.message || 'Avatar upload failed';
+      return { success: false, message };
+    }
+  };
+
   // Logout handler
   const logout = () => {
     setUser(null);
@@ -132,6 +148,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         updateProfile,
+        updateAvatar,
         logout,
         setUser,
       }}

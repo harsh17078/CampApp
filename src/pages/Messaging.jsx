@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import Navbar2 from '../components/Navbar2';
 import Sidebar from '../components/Sidebar';
+import BottomNav from '../components/BottomNav';
 import { useAuth } from '../context/AuthContext';
 import { messageAPI, userAPI } from '../services/api';
 import { FiSend, FiSearch, FiMessageSquare, FiUserCheck } from 'react-icons/fi';
@@ -398,6 +399,9 @@ export default function Messaging() {
           </Box>
         </Box>
       </Box>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </Box>
   );
 }

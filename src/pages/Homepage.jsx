@@ -7,6 +7,7 @@ import Card2 from '../components/Card2';
 import CardSkeleton from '../components/CardSkeleton';
 import TrendingWidget from '../components/TrendingWidget';
 import WhoToFollow from '../components/WhoToFollow';
+import BottomNav from '../components/BottomNav';
 import { postAPI } from '../services/api';
 import { FiRefreshCw, FiCompass, FiHash, FiX } from 'react-icons/fi';
 
@@ -134,7 +135,7 @@ export default function Homepage() {
   };
 
   return (
-    <Box minHeight="100vh" bg="var(--bg-primary)">
+    <Box minHeight="100vh" bg="var(--bg-primary)" pb={{ base: '75px', md: '20px' }}>
       <Navbar2 title="CampApp" />
 
       <Box className="microblog-container">
@@ -248,7 +249,7 @@ export default function Homepage() {
               textAlign="center"
               borderRadius="2xl"
               bg="var(--bg-surface)"
-              border="1px dashed var(--border-color)"
+              border="1px solid var(--border-color)"
             >
               <FiCompass size={36} color="var(--brand-primary)" style={{ margin: "0 auto 12px auto" }} />
               <Text fontWeight="700" fontSize="md" color="var(--text-primary)" mb={1}>
@@ -269,6 +270,9 @@ export default function Homepage() {
           <WhoToFollow />
         </Box>
       </Box>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav onOpenComposer={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
     </Box>
   );
 }
