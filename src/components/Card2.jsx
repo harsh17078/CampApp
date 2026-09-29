@@ -10,108 +10,174 @@ import {
   Input,
   Badge,
   Image,
-  Separator,
+  Menu,
+  Portal,
 } from '@chakra-ui/react';
 import {
-  BiLike,
-  BiSolidLike,
-  BiDislike,
-  BiSolidDislike,
-  BiCommentDetail,
-} from 'react-icons/bi';
-import { FiTrash2, FiSend } from 'react-icons/fi';
+  FiHeart,
+  FiRepeat,
+  FiMessageCircle,
+  FiBookmark,
+  FiShare2,
+  FiBarChart2,
+  FiTrash2,
+  FiSend,
+  FiEdit2,
+  FiCheck,
+} from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { postAPI } from '../services/api';
 import CardSkeleton from './CardSkeleton';
 
-export default function Card2({ post, loading, onDeletePost }) {
+// Helper: Parse and highlight #hashtags and @mentions into clickable links
+export const renderContentWithTags = (content, onSelectTag) => {
+  if (!content) return null;
+  const parts = content.split(/(\s+)/);
+
+  return parts.map((word, index) => {
+    if (word.startsWith('#') && word.length > 1) {
+      const tagClean = word.replace(/[^a-zA-Z0-9_]/g, '');
+      return (
+        <span
+          key={index}
+          className="hashtag-link"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onSelectTag) onSelectTag(tagClean);
+          }}
+        >
+          {word}
+        </span>
+      );
+    }
+    if (word.startsWith('@') && word.length > 1) {
+      return (
+        <span key={index} className="mention-link">
+          {word}
+        </span>
+      );
+    }
+    return word;
+  });
+};
+
+export default function Card2({ post, loading, onDeletePost, onQuotePost, onSelectTag }) {
   const { user } = useAuth();
   const [likesCount, setLikesCount] = useState(post?.likes_count || 0);
-  const [dislikesCount, setDislikesCount] = useState(post?.dislikes_count || 0);
   const [userReaction, setUserReaction] = useState(post?.user_reaction || null);
-  const [showComments, setShowComments] = useState(false);
+  const [repostsCount, setRepostsCount] = useState(post?.reposts_count || 0);
+  const [isReposted, setIsReposted] = useState(post?.is_reposted || false);
+  const [isBookmarked, setIsBookmarked] = useState(post?.is_bookmarked || false);
+  const [showReplies, setShowReplies] = useState(false);
   const [comments, setComments] = useState(post?.comments || []);
-  const [newComment, setNewComment] = useState('');
-  const [submittingComment, setSubmittingComment] = useState(false);
+  const [newReply, setNewReply] = useState('');
+  const [submittingReply, setSubmittingReply] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
-  if (loading) {
-    return <CardSkeleton />;
-  }
-
+  if (loading) return <CardSkeleton />;
   if (!post) return null;
 
-  // Handle Reactions
-  const handleReaction = async (type) => {
-    // Optimistic UI updates
+  // Like Action
+  const handleLike = async () => {
     const prevReaction = userReaction;
     const prevLikes = likesCount;
-    const prevDislikes = dislikesCount;
 
-    if (userReaction === type) {
+    if (userReaction === 'like') {
       setUserReaction(null);
-      if (type === 'like') setLikesCount((c) => Math.max(0, c - 1));
-      if (type === 'dislike') setDislikesCount((c) => Math.max(0, c - 1));
+      setLikesCount((c) => Math.max(0, c - 1));
     } else {
-      if (prevReaction === 'like') setLikesCount((c) => Math.max(0, c - 1));
-      if (prevReaction === 'dislike') setDislikesCount((c) => Math.max(0, c - 1));
-      setUserReaction(type);
-      if (type === 'like') setLikesCount((c) => c + 1);
-      if (type === 'dislike') setDislikesCount((c) => c + 1);
+      setUserReaction('like');
+      setLikesCount((c) => c + 1);
     }
 
     try {
-      const res = await postAPI.reactToPost(post.id, type);
+      const res = await postAPI.reactToPost(post.id, 'like');
       if (res.success) {
         setUserReaction(res.user_reaction);
         setLikesCount(res.likes_count);
-        setDislikesCount(res.dislikes_count);
       }
     } catch {
-      // Revert if API fails
       setUserReaction(prevReaction);
       setLikesCount(prevLikes);
-      setDislikesCount(prevDislikes);
     }
   };
 
-  // Handle Comment Submission
-  const handleAddComment = async (e) => {
-    e?.preventDefault();
-    if (!newComment.trim()) return;
+  // Repost Action
+  const handleRepost = async () => {
+    const nextState = !isReposted;
+    setIsReposted(nextState);
+    setRepostsCount((c) => (nextState ? c + 1 : Math.max(0, c - 1)));
 
-    setSubmittingComment(true);
     try {
-      const res = await postAPI.addComment(post.id, newComment.trim());
-      if (res.success && res.comment) {
-        setComments([...comments, res.comment]);
-        setNewComment('');
+      const res = await postAPI.repost(post.id);
+      if (res.success) {
+        setIsReposted(res.is_reposted);
+        setRepostsCount(res.reposts_count);
       }
     } catch {
-      // Mock comment fallback
+      setIsReposted(!nextState);
+    }
+  };
+
+  // Bookmark Action
+  const handleBookmark = async () => {
+    const nextState = !isBookmarked;
+    setIsBookmarked(nextState);
+
+    try {
+      const res = await postAPI.bookmark(post.id);
+      if (res.success) {
+        setIsBookmarked(res.is_bookmarked);
+      }
+    } catch {
+      setIsBookmarked(!nextState);
+    }
+  };
+
+  // Reply Submit
+  const handleAddReply = async (e) => {
+    e?.preventDefault();
+    if (!newReply.trim()) return;
+
+    setSubmittingReply(true);
+    try {
+      const res = await postAPI.addComment(post.id, newReply.trim());
+      if (res.success && res.comment) {
+        setComments([...comments, res.comment]);
+        setNewReply('');
+      }
+    } catch {
       const mockC = {
         id: Date.now(),
-        content: newComment.trim(),
+        content: newReply.trim(),
         author_name: user?.name || 'You',
         author_avatar: user?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
         created_at: new Date().toISOString(),
       };
       setComments([...comments, mockC]);
-      setNewComment('');
+      setNewReply('');
     } finally {
-      setSubmittingComment(false);
+      setSubmittingReply(false);
     }
   };
 
-  // Format Time
+  // Copy Link
+  const handleCopyLink = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(`${window.location.origin}/home?post=${post.id}`);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
   const formatTime = (timestamp) => {
     if (!timestamp) return 'Just now';
     const date = new Date(timestamp);
-    return date.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    const diffHours = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60));
+    if (diffHours < 1) return 'Just now';
+    if (diffHours < 24) return `${diffHours}h`;
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   };
 
   const isOwner = user && (user.id === post.user_id || post.author_name === user.name);
@@ -120,13 +186,20 @@ export default function Card2({ post, loading, onDeletePost }) {
     <Box
       className="glass-card"
       p={{ base: 4, sm: 5 }}
-      mb={6}
+      mb={4}
       bg="var(--bg-surface)"
       borderRadius="2xl"
       border="1px solid var(--border-color)"
     >
-      {/* Post Author Header */}
-      <HStack justify="space-between" mb={3}>
+      {/* Pinned Post Badge */}
+      {post.is_pinned && (
+        <HStack gap={1.5} mb={2} color="var(--brand-primary)" fontSize="2xs" fontWeight="700">
+          <Text>📌 Pinned Post</Text>
+        </HStack>
+      )}
+
+      {/* Author Header */}
+      <HStack justify="space-between" mb={2.5}>
         <HStack gap={3}>
           <Avatar.Root size="md" shape="full">
             <Avatar.Image src={post.author_avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} />
@@ -134,27 +207,30 @@ export default function Card2({ post, loading, onDeletePost }) {
           </Avatar.Root>
           <Box>
             <HStack gap={2}>
-              <Text fontWeight="700" fontSize="sm" color="var(--text-primary)">
+              <Text fontWeight="800" fontSize="sm" color="var(--text-primary)">
                 {post.author_name || "Camp Explorer"}
               </Text>
-              {post.feeling && (
-                <Badge size="xs" colorPalette="pink" variant="subtle" borderRadius="full">
-                  {post.feeling}
-                </Badge>
-              )}
+              <Text fontSize="2xs" color="var(--text-muted)">
+                @{post.author_name ? post.author_name.toLowerCase().replace(/\s+/g, '') : 'camper'}
+              </Text>
+              <Text fontSize="2xs" color="var(--text-muted)">
+                • {formatTime(post.created_at)}
+              </Text>
             </HStack>
-            <HStack gap={2} fontSize="xs" color="var(--text-muted)">
-              <Text>{formatTime(post.created_at)}</Text>
-              {post.location && <Text>• 📍 {post.location}</Text>}
-            </HStack>
+            {post.location && (
+              <Text fontSize="3xs" color="var(--text-muted)">
+                📍 {post.location}
+              </Text>
+            )}
           </Box>
         </HStack>
 
         {isOwner && onDeletePost && (
           <IconButton
-            size="xs"
+            size="2xs"
             variant="ghost"
-            colorPalette="red"
+            color="var(--text-muted)"
+            _hover={{ color: "red.500" }}
             onClick={() => onDeletePost(post.id)}
             aria-label="Delete Post"
           >
@@ -163,38 +239,26 @@ export default function Card2({ post, loading, onDeletePost }) {
         )}
       </HStack>
 
-      {/* Post Body */}
-      {post.title && (
-        <Text fontWeight="700" fontSize="md" mb={2} color="var(--text-primary)">
-          {post.title}
-        </Text>
-      )}
-
+      {/* Post Text with Hashtag & Mention Parsing */}
       <Text
         fontSize="sm"
         lineHeight="1.6"
         color="var(--text-primary)"
-        mb={post.image_url ? 3 : 2}
+        mb={post.image_url || post.quote_post ? 3 : 2}
         whiteSpace="pre-wrap"
       >
-        {post.content || post.body}
+        {renderContentWithTags(post.content || post.body, onSelectTag)}
       </Text>
 
-      {/* Post Image Attachment */}
+      {/* Image Media Preview */}
       {post.image_url && (
-        <Box
-          mb={4}
-          borderRadius="xl"
-          overflow="hidden"
-          maxHeight="420px"
-          bg="var(--bg-primary)"
-        >
+        <Box mb={3} borderRadius="xl" overflow="hidden" maxHeight="400px" bg="var(--bg-primary)">
           <Image
             src={post.image_url}
-            alt="Post image"
+            alt="Media"
             width="100%"
             height="auto"
-            maxH="420px"
+            maxH="400px"
             objectFit="cover"
             borderRadius="xl"
             loading="lazy"
@@ -202,106 +266,211 @@ export default function Card2({ post, loading, onDeletePost }) {
         </Box>
       )}
 
-      {/* Actions & Reactions */}
-      <HStack justify="space-between" pt={3} borderTop="1px solid var(--border-color)">
-        <HStack gap={2}>
-          {/* Like Button */}
-          <Button
-            size="xs"
-            variant={userReaction === 'like' ? 'solid' : 'ghost'}
-            colorPalette={userReaction === 'like' ? 'indigo' : 'gray'}
-            borderRadius="full"
-            onClick={() => handleReaction('like')}
-          >
-            {userReaction === 'like' ? <BiSolidLike size={16} /> : <BiLike size={16} />}
-            <Text ml={1.5} fontSize="xs" fontWeight="600">{likesCount}</Text>
-          </Button>
+      {/* Quote Post Card Preview */}
+      {post.quote_post && (
+        <Box
+          p={3.5}
+          mb={3}
+          borderRadius="xl"
+          border="1px solid var(--border-color)"
+          bg="var(--bg-primary)"
+          _hover={{ borderColor: "var(--brand-primary)" }}
+        >
+          <HStack gap={2} mb={1.5}>
+            <Avatar.Root size="2xs" shape="full">
+              <Avatar.Image src={post.quote_post.author_avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} />
+              <Avatar.Fallback name={post.quote_post.author_name} />
+            </Avatar.Root>
+            <Text fontSize="xs" fontWeight="700" color="var(--text-primary)">
+              {post.quote_post.author_name}
+            </Text>
+            <Text fontSize="3xs" color="var(--text-muted)">
+              • {formatTime(post.quote_post.created_at)}
+            </Text>
+          </HStack>
+          <Text fontSize="xs" color="var(--text-secondary)" lineHeight="1.5">
+            {renderContentWithTags(post.quote_post.content, onSelectTag)}
+          </Text>
+        </Box>
+      )}
 
-          {/* Dislike Button */}
-          <Button
-            size="xs"
-            variant={userReaction === 'dislike' ? 'solid' : 'ghost'}
-            colorPalette={userReaction === 'dislike' ? 'red' : 'gray'}
-            borderRadius="full"
-            onClick={() => handleReaction('dislike')}
-          >
-            {userReaction === 'dislike' ? <BiSolidDislike size={16} /> : <BiDislike size={16} />}
-            <Text ml={1.5} fontSize="xs" fontWeight="600">{dislikesCount}</Text>
-          </Button>
+      {/* Microblogging Action Bar */}
+      <HStack
+        justify="space-between"
+        pt={2.5}
+        mt={1}
+        borderTop="1px solid var(--border-color)"
+        color="var(--text-secondary)"
+      >
+        {/* Reply Action */}
+        <HStack
+          gap={1.5}
+          cursor="pointer"
+          _hover={{ color: "var(--brand-primary)" }}
+          onClick={() => setShowReplies(!showReplies)}
+        >
+          <IconButton size="xs" variant="ghost" borderRadius="full" color="inherit">
+            <FiMessageCircle size={16} />
+          </IconButton>
+          <Text fontSize="xs" fontWeight="600">
+            {comments.length || post.comments_count || 0}
+          </Text>
+        </HStack>
 
-          {/* Comment Toggle */}
-          <Button
+        {/* Repost & Quote Post Menu */}
+        <Menu.Root>
+          <Menu.Trigger asChild>
+            <HStack
+              gap={1.5}
+              cursor="pointer"
+              color={isReposted ? "green.500" : "inherit"}
+              _hover={{ color: "green.500" }}
+            >
+              <IconButton size="xs" variant="ghost" borderRadius="full" color="inherit">
+                <FiRepeat size={16} />
+              </IconButton>
+              <Text fontSize="xs" fontWeight="600">{repostsCount}</Text>
+            </HStack>
+          </Menu.Trigger>
+          <Portal>
+            <Menu.Positioner>
+              <Menu.Content bg="var(--bg-surface)" borderColor="var(--border-color)" borderRadius="xl" p={1}>
+                <Menu.Item
+                  value="repost"
+                  onClick={handleRepost}
+                  borderRadius="lg"
+                  p={2}
+                  color={isReposted ? "green.500" : "var(--text-primary)"}
+                >
+                  <HStack gap={2}>
+                    <FiRepeat size={15} />
+                    <Text fontSize="xs" fontWeight="600">{isReposted ? 'Undo Repost' : 'Repost'}</Text>
+                  </HStack>
+                </Menu.Item>
+                <Menu.Item
+                  value="quote"
+                  onClick={() => onQuotePost && onQuotePost(post)}
+                  borderRadius="lg"
+                  p={2}
+                  color="var(--text-primary)"
+                >
+                  <HStack gap={2}>
+                    <FiEdit2 size={15} />
+                    <Text fontSize="xs" fontWeight="600">Quote Post</Text>
+                  </HStack>
+                </Menu.Item>
+              </Menu.Content>
+            </Menu.Positioner>
+          </Portal>
+        </Menu.Root>
+
+        {/* Like Action */}
+        <HStack
+          gap={1.5}
+          cursor="pointer"
+          color={userReaction === 'like' ? '#ec4899' : 'inherit'}
+          _hover={{ color: '#ec4899' }}
+          onClick={handleLike}
+        >
+          <IconButton size="xs" variant="ghost" borderRadius="full" color="inherit">
+            {userReaction === 'like' ? <FaHeart size={16} color="#ec4899" /> : <FiHeart size={16} />}
+          </IconButton>
+          <Text fontSize="xs" fontWeight="600">{likesCount}</Text>
+        </HStack>
+
+        {/* View Impressions */}
+        <HStack gap={1.5} color="var(--text-muted)" display={{ base: 'none', sm: 'flex' }}>
+          <FiBarChart2 size={15} />
+          <Text fontSize="xs" fontWeight="500">
+            {post.views_count ? `${post.views_count >= 1000 ? (post.views_count / 1000).toFixed(1) + 'K' : post.views_count}` : '1.2K'}
+          </Text>
+        </HStack>
+
+        {/* Bookmark & Share */}
+        <HStack gap={1}>
+          <IconButton
             size="xs"
             variant="ghost"
             borderRadius="full"
-            color="var(--text-secondary)"
-            onClick={() => setShowComments(!showComments)}
+            color={isBookmarked ? "var(--brand-primary)" : "inherit"}
+            _hover={{ color: "var(--brand-primary)" }}
+            onClick={handleBookmark}
+            aria-label="Bookmark"
           >
-            <BiCommentDetail size={16} />
-            <Text ml={1.5} fontSize="xs" fontWeight="600">
-              {comments.length || post.comments_count || 0}
-            </Text>
-          </Button>
+            <FiBookmark size={15} fill={isBookmarked ? "currentColor" : "none"} />
+          </IconButton>
+
+          <IconButton
+            size="xs"
+            variant="ghost"
+            borderRadius="full"
+            color={copiedLink ? "green.500" : "inherit"}
+            _hover={{ color: "var(--brand-primary)" }}
+            onClick={handleCopyLink}
+            aria-label="Share"
+          >
+            {copiedLink ? <FiCheck size={15} /> : <FiShare2 size={15} />}
+          </IconButton>
         </HStack>
       </HStack>
 
-      {/* Comments Section */}
-      {showComments && (
+      {/* Linear Reply Stream */}
+      {showReplies && (
         <VStack align="stretch" gap={3} mt={4} pt={3} borderTop="1px dashed var(--border-color)">
-          {/* Comment Form */}
-          <HStack as="form" onSubmit={handleAddComment} gap={2}>
+          {/* Reply Form */}
+          <HStack as="form" onSubmit={handleAddReply} gap={2}>
             <Avatar.Root size="xs" shape="full">
               <Avatar.Image src={user?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} />
               <Avatar.Fallback name={user?.name || "Me"} />
             </Avatar.Root>
             <Input
               size="xs"
-              placeholder="Write a comment..."
+              placeholder="Post your reply..."
               borderRadius="full"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              value={newReply}
+              onChange={(e) => setNewReply(e.target.value)}
               bg="var(--bg-primary)"
               color="var(--text-primary)"
             />
-            <IconButton
-              size="xs"
+            <Button
+              size="2xs"
               type="submit"
               className="brand-button"
               borderRadius="full"
-              disabled={!newComment.trim() || submittingComment}
-              loading={submittingComment}
-              aria-label="Send Comment"
+              px={3}
+              disabled={!newReply.trim() || submittingReply}
+              loading={submittingReply}
             >
-              <FiSend size={12} />
-            </IconButton>
+              <FiSend size={11} style={{ marginRight: 4 }} /> Reply
+            </Button>
           </HStack>
 
-          {/* Comments List */}
+          {/* Chronological Linear Replies */}
           {comments.length > 0 ? (
             comments.map((c, i) => (
-              <HStack key={c.id || i} align="flex-start" gap={2.5} p={2} bg="var(--bg-primary)" borderRadius="xl">
+              <HStack key={c.id || i} align="flex-start" gap={2.5} p={2.5} bg="var(--bg-primary)" borderRadius="xl">
                 <Avatar.Root size="2xs" shape="full">
                   <Avatar.Image src={c.author_avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} />
-                  <Avatar.Fallback name={c.author_name || "User"} />
+                  <Avatar.Fallback name={c.author_name || "Camper"} />
                 </Avatar.Root>
                 <Box flex="1">
                   <HStack justify="space-between">
                     <Text fontSize="2xs" fontWeight="700" color="var(--text-primary)">
-                      {c.author_name || "Camp Camper"}
+                      {c.author_name || "Camper"}
                     </Text>
                     <Text fontSize="3xs" color="var(--text-muted)">
                       {formatTime(c.created_at)}
                     </Text>
                   </HStack>
                   <Text fontSize="xs" color="var(--text-secondary)" mt={0.5}>
-                    {c.content}
+                    {renderContentWithTags(c.content, onSelectTag)}
                   </Text>
                 </Box>
               </HStack>
             ))
           ) : (
-            <Text fontSize="2xs" color="var(--text-muted)" textAlign="center" py={2}>
-              No comments yet. Be the first to spark the conversation!
+            <Text fontSize="2xs" color="var(--text-muted)" textAlign="center" py={1.5}>
+              No replies yet. Start the conversation!
             </Text>
           )}
         </VStack>

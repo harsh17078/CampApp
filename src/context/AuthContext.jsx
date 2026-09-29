@@ -9,6 +9,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [themeMode, setThemeMode] = useState(localStorage.getItem('camp_theme') || 'light');
 
+  // Apply theme to DOM so CSS variables are activated
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode);
+  }, [themeMode]);
+
   // Toggle Theme
   const toggleTheme = () => {
     const nextTheme = themeMode === 'light' ? 'dark' : 'light';

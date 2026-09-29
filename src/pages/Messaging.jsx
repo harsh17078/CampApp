@@ -169,10 +169,12 @@ export default function Messaging() {
     <Box minHeight="100vh" bg="var(--bg-primary)">
       <Navbar2 title="CampApp" />
 
-      <Box className="main-app-container">
-        <Sidebar />
+      <Box className="microblog-container">
+        <Box className="microblog-left-sidebar">
+          <Sidebar />
+        </Box>
 
-        <Box className="feed-content-wrapper" maxW="960px" p={{ base: 2, md: 4 }}>
+        <Box className="microblog-center-feed" maxW="960px" p={{ base: 2, md: 4 }}>
           <Box
             className="glass-card"
             borderRadius="3xl"

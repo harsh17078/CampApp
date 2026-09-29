@@ -92,10 +92,12 @@ export default function Profile() {
     <Box minHeight="100vh" bg="var(--bg-primary)">
       <Navbar2 title="CampApp" />
 
-      <Box className="main-app-container">
-        <Sidebar />
+      <Box className="microblog-container">
+        <Box className="microblog-left-sidebar">
+          <Sidebar />
+        </Box>
 
-        <Box className="feed-content-wrapper" maxW="780px">
+        <Box className="microblog-center-feed" maxW="780px">
           {/* Profile Header Card */}
           <Box
             className="glass-card"

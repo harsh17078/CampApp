@@ -113,6 +113,11 @@ body {
   width: 260px;
   flex-shrink: 0;
   display: none;
+  position: sticky;
+  top: 68px;
+  height: calc(100vh - 68px);
+  overflow-y: auto;
+  padding: 1.25rem 0.5rem;
 }
 
 .microblog-center-feed {
@@ -128,6 +133,10 @@ body {
   flex-shrink: 0;
   padding: 1.25rem 1rem;
   display: none;
+  position: sticky;
+  top: 68px;
+  height: calc(100vh - 68px);
+  overflow-y: auto;
 }
 
 @media (min-width: 768px) {
