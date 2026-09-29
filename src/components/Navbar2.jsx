@@ -1,192 +1,201 @@
 import React from 'react';
-import { IoIosSearch } from "react-icons/io";
-import { AiFillInstagram } from "react-icons/ai";
-import { FaBell, FaUserFriends } from "react-icons/fa";
-import { RiMessage2Fill } from "react-icons/ri";
+import {
+  Box,
+  HStack,
+  Input,
+  Text,
+  IconButton,
+  Avatar,
+  Menu,
+  Portal,
+  Button,
+} from '@chakra-ui/react';
+import { IoSearchOutline, IoMoonOutline, IoSunnyOutline } from 'react-icons/io5';
+import { FiCompass, FiMessageSquare, FiBell, FiLogOut, FiUser } from 'react-icons/fi';
+import { useNavigate, Link } from 'react-router';
+import { useAuth } from '../context/AuthContext';
 
-import { Avatar, AvatarGroup, HStack, defineStyle,Button } from "@chakra-ui/react";
-import Profile from '../pages/profile';
-import { useNavigate,Link } from 'react-router';
-import { useEffect,useState } from 'react';
+export default function Navbar2({ title = "CampApp" }) {
+  const navigate = useNavigate();
+  const { user, logout, themeMode, toggleTheme } = useAuth();
 
-export default function Navbar2(props) {
-  const ringCss = defineStyle({
-    outlineWidth: "2px",
-    outlineColor: "colorPalette.500",
-    outlineOffset: "2px",
-    outlineStyle: "solid",
-  });
-
-
-const navigate = useNavigate();
-const  handleProfile = ()=> {
-         navigate('/profile');
-    }
-
-    const [user, setUser] = useState({
-        email: "",
-        phone: "",
-        password: "",
-        name: "",
-        gender: "",
-        dob: "",
-        country: ""
-    });
-
-      useEffect(() => {
-          const storedUser = localStorage.getItem("userdata");
-          if (storedUser) {
-              setUser(JSON.parse(storedUser));
-          }
-          
-      }, []);
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
-    <>
-      <nav className="navbar navbar-expand-lg  d-flex fixed-top px-2"  style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>
-        <div className="container-fluid w-100 px-2">
-
-          {/* Brand Section */}
-          <div className="d-flex align-items-center">
-            <AiFillInstagram size={30} className="me-2" />
-            <h3 className="navbar-brand mb-0" style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>{props.title}</h3>
-          </div>
-
-          {/* Toggler for small screens */}
-          <button
-            className="navbar-toggler ms-auto"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarTogglerDemo03"
-            aria-controls="navbarTogglerDemo03"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-
-          {/* Search bar for md and up */}
-          <div className="d-none mx-auto d-md-block " style={{  width : "500px"}} >
-            <form 
-              className="position-relative w-100"
-              role="search"
-              
+    <Box
+      as="header"
+      position="fixed"
+      top="0"
+      left="0"
+      right="0"
+      height="68px"
+      zIndex="1100"
+      className="glass-panel"
+      borderBottom="1px solid var(--border-color)"
+      px={{ base: 4, md: 8 }}
+      display="flex"
+      alignItems="center"
+    >
+      <HStack justify="space-between" width="100%" maxW="1400px" mx="auto">
+        {/* Brand */}
+        <Link to="/home" style={{ textDecoration: 'none' }}>
+          <HStack gap={2.5}>
+            <Box
+              p={2}
+              borderRadius="xl"
+              bg="linear-gradient(135deg, #6366f1 0%, #ec4899 100%)"
+              color="white"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              boxShadow="0 4px 10px rgba(99, 102, 241, 0.25)"
             >
-              <span 
-                className="position-absolute"
-                style={{
-                  top: "50%",
-                  left: "20px",
-                  transform: "translateY(-50%)",
-                  color: "#6c757d",
-                  fontSize: "1.3rem",
-                  zIndex: "2"
-                  
-                }}
-              >
-                <IoIosSearch />
-              </span>
+              <FiCompass size={20} />
+            </Box>
+            <Text
+              fontSize="xl"
+              fontWeight="800"
+              className="gradient-text"
+              letterSpacing="-0.5px"
+            >
+              {title}
+            </Text>
+          </HStack>
+        </Link>
 
-              <input  style = {{backgroundColor : props.btntext === 'Light' ? '#a2a2b0': 'white' ,color : props.btntext === 'Light' ? 'white': 'black' , height: "45px" }}
-                className="form-control rounded-pill ps-5 shadow-sm border-0"
-                type="search"
-                placeholder="Search for friend, post or video"
-                aria-label="Search"
-              
-              />
+        {/* Global Search */}
+        <Box
+          display={{ base: 'none', md: 'block' }}
+          position="relative"
+          width="420px"
+          maxW="100%"
+        >
+          <Box
+            position="absolute"
+            left="14px"
+            top="50%"
+            transform="translateY(-50%)"
+            color="var(--text-muted)"
+            pointerEvents="none"
+          >
+            <IoSearchOutline size={18} />
+          </Box>
+          <Input
+            placeholder="Search creators, stories, and camps..."
+            pl="42px"
+            pr="16px"
+            py="8px"
+            borderRadius="full"
+            bg="var(--bg-surface)"
+            color="var(--text-primary)"
+            borderColor="var(--border-color)"
+            _hover={{ borderColor: "var(--brand-primary)" }}
+            _focus={{ borderColor: "var(--brand-primary)", boxShadow: "0 0 0 2px var(--brand-glow)" }}
+            fontSize="sm"
+          />
+        </Box>
 
-              <button
-                className="btn rounded-pill"
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  right: "10px",
-                  transform: "translateY(-50%)",
-                  fontSize: "1rem",
-                  background: "none",
-                  color : props.btntext === 'Light' ? "white" : '#0d6efd',
-                  border: "none"
-                }}
-                type="submit"
-              >
-                Search
-              </button>
-            </form>
-          </div>
+        {/* Actions & Profile */}
+        <HStack gap={{ base: 1, sm: 3 }}>
+          {/* Theme Switcher */}
+          <IconButton
+            variant="ghost"
+            borderRadius="full"
+            color="var(--text-primary)"
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+          >
+            {themeMode === 'dark' ? <IoSunnyOutline size={20} /> : <IoMoonOutline size={20} />}
+          </IconButton>
 
-          {/* Navbar Right Items */}
-          <div className="collapse navbar-collapse mt-2 mt-lg-0" id="navbarTogglerDemo03" >
-            <ul className="navbar-nav ms-auto align-items-center gap-3">
+          {/* Messages Link */}
+          <IconButton
+            variant="ghost"
+            borderRadius="full"
+            color="var(--text-primary)"
+            onClick={() => navigate('/messaging')}
+            aria-label="Messages"
+          >
+            <FiMessageSquare size={19} />
+          </IconButton>
 
-              {/* Small screen: show search icon in toggler */}
-              <li className="nav-item d-md-none">
-                 <form
-              className="position-relative w-100"
-              role="search">
-              <span
-                className="position-absolute"
-                style={{
-                  top: "50%",
-                  left: "20px",
-                  transform: "translateY(-50%)",
-                  color: "#6c757d",
-                  fontSize: "1.3rem",
-                  zIndex: "2"
-                }}
-              >
-                <IoIosSearch />
-              </span>
-                 <input
-                className="form-control rounded-pill ps-5 my-0 shadow-sm border-0"
-                type="search"
-                placeholder="Search for friend and posts"
-                aria-label="Search"
-                style={{ height: "45px" ,width : "400px",  maxWidth : "400px"}}
-              />
-              <button
-                className="btn rounded-pill"
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  right: "10px",
-                  transform: "translateY(-50%)",
-                  fontSize: "1rem",
-                  background: "none",
-                  color: "#0d6efd",
-                  border: "none"
-                }}
-                type="submit"
-              >
-                Search
-              </button>
-               </form>
-              </li>
+          {/* Notifications */}
+          <IconButton
+            variant="ghost"
+            borderRadius="full"
+            color="var(--text-primary)"
+            aria-label="Notifications"
+          >
+            <FiBell size={19} />
+          </IconButton>
 
-              <li className="nav-item" >
-                <Link className="nav-link" to="/home/" style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/" style= {{backgroundColor : props.btntext === 'Light' ? 'black' : '#d9d9dd' , color : props.btntext === 'Light'?'White' : 'Black'}}>Timeline</Link>
-              </li>
-
-              <li className="nav-item fs-5"><FaUserFriends /></li>
-              <li className="nav-item fs-5"><RiMessage2Fill /></li>
-              <li className="nav-item fs-5"><FaBell /></li>
-              <li className="nav-item">
-                <HStack>
-                  <Button variant = 'ghost' onClick = {handleProfile}>
-                  <AvatarGroup>
-                    <Avatar.Root css={ringCss} size="lg" colorPalette="pink">
-                      <Avatar.Fallback name={user.name} />
-                    </Avatar.Root>
-                  </AvatarGroup>
-                  </Button>
+          {/* User Profile Menu */}
+          <Menu.Root>
+            <Menu.Trigger asChild>
+              <Button variant="ghost" p={1} borderRadius="full" aria-label="Profile options">
+                <HStack gap={2}>
+                  <Avatar.Root size="sm" shape="full">
+                    <Avatar.Image src={user?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"} />
+                    <Avatar.Fallback name={user?.name || "User"} />
+                  </Avatar.Root>
+                  <Text
+                    fontSize="sm"
+                    fontWeight="600"
+                    color="var(--text-primary)"
+                    display={{ base: 'none', lg: 'block' }}
+                  >
+                    {user?.name?.split(' ')[0] || 'Account'}
+                  </Text>
                 </HStack>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </>
+              </Button>
+            </Menu.Trigger>
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content
+                  bg="var(--bg-surface)"
+                  borderColor="var(--border-color)"
+                  boxShadow="var(--shadow-xl)"
+                  borderRadius="xl"
+                  p={1.5}
+                  minW="180px"
+                >
+                  <Menu.Item
+                    value="profile"
+                    onClick={() => navigate('/profile')}
+                    borderRadius="lg"
+                    p={2.5}
+                    cursor="pointer"
+                    color="var(--text-primary)"
+                    _hover={{ bg: "var(--brand-glow)", color: "var(--brand-primary)" }}
+                  >
+                    <HStack gap={2}>
+                      <FiUser size={16} />
+                      <Text fontSize="sm">My Profile</Text>
+                    </HStack>
+                  </Menu.Item>
+                  <Menu.Item
+                    value="logout"
+                    onClick={handleLogout}
+                    borderRadius="lg"
+                    p={2.5}
+                    cursor="pointer"
+                    color="red.500"
+                    _hover={{ bg: "red.50", color: "red.600" }}
+                  >
+                    <HStack gap={2}>
+                      <FiLogOut size={16} />
+                      <Text fontSize="sm">Sign Out</Text>
+                    </HStack>
+                  </Menu.Item>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
+        </HStack>
+      </HStack>
+    </Box>
   );
 }
