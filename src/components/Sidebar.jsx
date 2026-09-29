@@ -8,6 +8,7 @@ import {
   FiLogOut,
   FiCompass,
   FiEdit3,
+  FiBookmark,
 } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
@@ -19,6 +20,7 @@ export default function Sidebar({ onOpenComposer }) {
   const navItems = [
     { label: 'Camp Feed', path: '/home', icon: FiHome },
     { label: 'Explore', path: '/home', icon: FiCompass },
+    { label: 'Bookmarks', path: '/bookmarks', icon: FiBookmark },
     { label: 'Messages', path: '/messaging', icon: FiMessageSquare },
     { label: 'My Profile', path: '/profile', icon: FiUser },
   ];

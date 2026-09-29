@@ -9,6 +9,7 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import Splash from './components/Splash';
 
 const Homepage = lazy(() => import('./pages/Homepage.jsx'));
+const Bookmarks = lazy(() => import('./pages/Bookmarks.jsx'));
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         {/* Protected Authenticated Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Homepage />} />
+          <Route path="/bookmarks" element={<Bookmarks />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/messaging" element={<Messaging />} />
         </Route>

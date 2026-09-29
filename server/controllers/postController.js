@@ -47,6 +47,15 @@ export const getAllPosts = async (req, res, next) => {
         );
       }
 
+      // "Bookmarks" feed filter
+      if (feedType === 'bookmarks' && currentUserId > 0) {
+        const bookmarkedIds = memoryStore.bookmarks
+          .filter((b) => b.user_id === currentUserId)
+          .map((b) => b.post_id);
+
+        filteredPosts = filteredPosts.filter((p) => bookmarkedIds.includes(p.id));
+      }
+
       // Format posts with author, likes, reposts, bookmarks, quotes, comments
       const formatted = filteredPosts.map((p) => {
         const author = memoryStore.users.find((u) => u.id === p.user_id) || {
@@ -61,6 +70,9 @@ export const getAllPosts = async (req, res, next) => {
         const myReaction = memoryStore.post_likes.find((pl) => pl.post_id === p.id && pl.user_id === currentUserId);
         const isReposted = memoryStore.reposts.some((r) => r.post_id === p.id && r.user_id === currentUserId);
         const isBookmarked = memoryStore.bookmarks.some((b) => b.post_id === p.id && b.user_id === currentUserId);
+        const isFollowingAuthor = memoryStore.follows.some(
+          (f) => f.follower_id === currentUserId && f.following_id === p.user_id
+        );
         const postComments = memoryStore.comments.filter((c) => c.post_id === p.id);
 
         // Quote post preview if quoted
@@ -100,6 +112,7 @@ export const getAllPosts = async (req, res, next) => {
           user_reaction: myReaction ? myReaction.type : null,
           is_reposted: isReposted,
           is_bookmarked: isBookmarked,
+          is_following_author: isFollowingAuthor,
           quote_post: quotePost,
           comments: postComments.map((c) => {
             const cu = memoryStore.users.find((user) => user.id === c.user_id) || { name: 'Camper' };
@@ -121,7 +134,7 @@ export const getAllPosts = async (req, res, next) => {
     // Native MySQL query fallback
     const pool = getPool();
     let whereClause = '1=1';
-    const params = [currentUserId, currentUserId, currentUserId];
+    const params = [currentUserId, currentUserId, currentUserId, currentUserId];
 
     if (tag) {
       whereClause += ' AND p.content LIKE ?';
@@ -131,6 +144,14 @@ export const getAllPosts = async (req, res, next) => {
     if (query) {
       whereClause += ' AND (p.content LIKE ? OR p.location LIKE ?)';
       params.push(`%${query}%`, `%${query}%`);
+    }
+
+    if (feedType === 'bookmarks' && currentUserId > 0) {
+      whereClause += ' AND EXISTS(SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ?)';
+      params.push(currentUserId);
+    } else if (feedType === 'following' && currentUserId > 0) {
+      whereClause += ' AND (p.user_id IN (SELECT f.following_id FROM follows f WHERE f.follower_id = ?) OR p.user_id = ?)';
+      params.push(currentUserId, currentUserId);
     }
 
     const [posts] = await pool.query(
@@ -145,7 +166,8 @@ export const getAllPosts = async (req, res, next) => {
         (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) AS comments_count,
         (SELECT pl.type FROM post_likes pl WHERE pl.post_id = p.id AND pl.user_id = ?) AS user_reaction,
         EXISTS(SELECT 1 FROM reposts r WHERE r.post_id = p.id AND r.user_id = ?) AS is_reposted,
-        EXISTS(SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ?) AS is_bookmarked
+        EXISTS(SELECT 1 FROM bookmarks b WHERE b.post_id = p.id AND b.user_id = ?) AS is_bookmarked,
+        EXISTS(SELECT 1 FROM follows f WHERE f.follower_id = ? AND f.following_id = p.user_id) AS is_following_author
       FROM posts p
       JOIN users u ON p.user_id = u.id
       WHERE ${whereClause}

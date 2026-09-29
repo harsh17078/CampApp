@@ -24,10 +24,12 @@ import {
   FiSend,
   FiEdit2,
   FiCheck,
+  FiUserPlus,
+  FiUserCheck,
 } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
-import { postAPI } from '../services/api';
+import { postAPI, userAPI } from '../services/api';
 import CardSkeleton from './CardSkeleton';
 
 // Helper: Parse and highlight #hashtags and @mentions into clickable links
@@ -74,9 +76,43 @@ export default function Card2({ post, loading, onDeletePost, onQuotePost, onSele
   const [newReply, setNewReply] = useState('');
   const [submittingReply, setSubmittingReply] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(post?.is_following_author || false);
+  const [followHover, setFollowHover] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
+  // Sync initial isFollowing if post updates
+  React.useEffect(() => {
+    if (post?.is_following_author !== undefined) {
+      setIsFollowing(Boolean(post.is_following_author));
+    }
+  }, [post?.is_following_author]);
 
   if (loading) return <CardSkeleton />;
   if (!post) return null;
+
+  // Follow / Unfollow Author Action
+  const handleToggleFollow = async (e) => {
+    e?.stopPropagation();
+    if (!user) return;
+    if (!post.user_id) return;
+
+    const prev = isFollowing;
+    setIsFollowing(!prev);
+    setFollowLoading(true);
+
+    try {
+      if (prev) {
+        await userAPI.unfollow(post.user_id);
+      } else {
+        await userAPI.follow(post.user_id);
+      }
+    } catch (err) {
+      console.error('Follow error:', err);
+      setIsFollowing(prev);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   // Like Action
   const handleLike = async () => {
@@ -225,18 +261,74 @@ export default function Card2({ post, loading, onDeletePost, onQuotePost, onSele
           </Box>
         </HStack>
 
-        {isOwner && onDeletePost && (
-          <IconButton
-            size="2xs"
-            variant="ghost"
-            color="var(--text-muted)"
-            _hover={{ color: "red.500" }}
-            onClick={() => onDeletePost(post.id)}
-            aria-label="Delete Post"
-          >
-            <FiTrash2 />
-          </IconButton>
-        )}
+        <HStack gap={2}>
+          {!isOwner && post.user_id && (
+            <Button
+              size="2xs"
+              variant={isFollowing ? "outline" : "solid"}
+              borderRadius="full"
+              fontSize="3xs"
+              fontWeight="700"
+              px={2.5}
+              py={1}
+              color={
+                isFollowing
+                  ? followHover
+                    ? "red.500"
+                    : "var(--text-secondary)"
+                  : "white"
+              }
+              borderColor={isFollowing ? (followHover ? "red.300" : "var(--border-color)") : "transparent"}
+              bg={
+                isFollowing
+                  ? followHover
+                    ? "rgba(239, 68, 68, 0.08)"
+                    : "var(--bg-secondary)"
+                  : "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)"
+              }
+              _hover={{
+                transform: "scale(1.02)",
+                bg: isFollowing
+                  ? "rgba(239, 68, 68, 0.12)"
+                  : "linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)",
+                color: isFollowing ? "red.500" : "white",
+              }}
+              loading={followLoading}
+              onMouseEnter={() => setFollowHover(true)}
+              onMouseLeave={() => setFollowHover(false)}
+              onClick={handleToggleFollow}
+            >
+              {isFollowing ? (
+                followHover ? (
+                  "Unfollow"
+                ) : (
+                  <HStack gap={1}>
+                    <FiUserCheck size={11} />
+                    <Text>Following</Text>
+                  </HStack>
+                )
+              ) : (
+                <HStack gap={1}>
+                  <FiUserPlus size={11} />
+                  <Text>Follow</Text>
+                </HStack>
+              )}
+            </Button>
+          )}
+
+          {isOwner && onDeletePost && (
+            <IconButton
+              size="2xs"
+              variant="ghost"
+              color="var(--text-muted)"
+              _hover={{ color: "red.500" }}
+              onClick={() => onDeletePost(post.id)}
+              aria-label="Delete Post"
+            >
+              <FiTrash2 />
+            </IconButton>
+          )}
+        </HStack>
       </HStack>
 
       {/* Post Text with Hashtag & Mention Parsing */}
