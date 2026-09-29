@@ -240,7 +240,29 @@ export const createPost = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'Posted to Camp!',
-      postId: result.insertId,
+      post: {
+        id: result.insertId,
+        user_id: userId,
+        content: content.trim(),
+        image_url: image_url || null,
+        feeling: feeling || null,
+        location: location || null,
+        views_count: 1,
+        is_pinned: false,
+        created_at: new Date().toISOString(),
+        author_name: req.user.name,
+        author_email: req.user.email,
+        author_avatar: req.user.avatar_url,
+        likes_count: 0,
+        dislikes_count: 0,
+        reposts_count: 0,
+        comments_count: 0,
+        user_reaction: null,
+        is_reposted: false,
+        is_bookmarked: false,
+        quote_post: null,
+        comments: [],
+      },
     });
   } catch (error) {
     next(error);

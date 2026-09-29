@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import getPool from '../config/db.js';
+import getPool, { memoryStore, isFallback } from '../config/db.js';
 
 export const protect = async (req, res, next) => {
   let token;
@@ -20,6 +20,23 @@ export const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_campapp_jwt_key_2026_jwt_token');
+
+    // --- In-memory fallback mode ---
+    if (isFallback()) {
+      const user = memoryStore.users.find((u) => u.id === Number(decoded.id));
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'The user belonging to this token no longer exists',
+        });
+      }
+      // Attach user without the password hash
+      const { password_hash, ...safeUser } = user;
+      req.user = safeUser;
+      return next();
+    }
+
+    // --- MySQL mode ---
     const pool = getPool();
     const [rows] = await pool.query(
       'SELECT id, name, email, phone, gender, dob, country, bio, avatar_url, cover_url, created_at FROM users WHERE id = ?',
